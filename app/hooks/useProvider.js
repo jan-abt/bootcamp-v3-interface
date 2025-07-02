@@ -18,7 +18,7 @@ export function useProvider() {
             setProvider(p)
         }
 
-    }, [sdk]) // dependency: run whenever sdk loads/updates
+    }, [sdk]) // dependency: run whenever sdk loads/changes
 
     return { provider, chainId}
 }
