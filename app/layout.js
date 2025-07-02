@@ -7,6 +7,7 @@ const lexend = Lexend({
 
 // Components
 import MetaMaskProvider from "./components/providers/MetaMaskProvider";
+import StoreProvider from "./components/providers/StoreProvider";
 import TopNav from "./components/TopNav";
 
 export const metadata = {
@@ -16,15 +17,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <MetaMaskProvider>
-      <html lang="en">
-        <body className={`${lexend.className}`}>
-          <main className="content">
-            <TopNav />
-            {children}
-          </main>
-        </body>
-      </html>
-    </MetaMaskProvider>
+    <StoreProvider>
+      <MetaMaskProvider>
+        <html lang="en">
+          <body className={`${lexend.className}`}>
+            <main className="content">
+              <TopNav />
+              {children}
+            </main>
+          </body>
+        </html>
+      </MetaMaskProvider>
+    </StoreProvider>
   );
 }
