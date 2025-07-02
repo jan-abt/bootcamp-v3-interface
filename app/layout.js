@@ -9,6 +9,7 @@ const lexend = Lexend({
 import MetaMaskProvider from "./components/providers/MetaMaskProvider";
 import StoreProvider from "./components/providers/StoreProvider";
 import TopNav from "./components/TopNav";
+import SideNav from "./components/SideNav";
 
 export const metadata = {
   title: "DAPP Exchange",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       <MetaMaskProvider>
         <html lang="en">
           <body className={`${lexend.className}`}>
+            <SideNav/>
             <main className="content">
               <TopNav />
               {children}
