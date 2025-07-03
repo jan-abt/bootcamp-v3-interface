@@ -72,7 +72,7 @@ function TopNav() {
 
         if (sdk && metamask) {
             console.log(config[Number(chainId)])
-            console.log(chainId, Number(chainId))
+
             // Create event listeners
             metamask.on("accountsChanged", async (accounts) => {
                 if (accounts.length === 0) {
