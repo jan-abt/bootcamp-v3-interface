@@ -4,7 +4,8 @@ import { useEffect } from "react"
 import { ethers } from "ethers"
 
 // Components
-import Balances from "../components/Balances";
+import Balances from "@/app/components/Balances";
+import Transfer from "@/app/components/Transfer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -18,13 +19,13 @@ import {
 
 // Custom hooks
 import { useTokens } from "@/app/hooks/useTokens";
-import { useExchange } from "../hooks/useExchange";
+import { useExchange } from "@/app/hooks/useExchange";
 
 
 export default function Home() {
 
   // Hooks
-  const useDispatch = useAppDispatch()
+  const dispatch = useAppDispatch()
   const { tokens: tokenContracts } = useTokens()
   const { exchange } = useExchange()
   const account = useAppSelector(selectAccount)
@@ -44,7 +45,7 @@ export default function Home() {
         const symbol = await tokenContracts[address].symbol()
 
         // Dispatch token
-        useDispatch(setToken({
+        dispatch(setToken({
           index: index,
           address: address,
           symbol: symbol
@@ -54,7 +55,7 @@ export default function Home() {
         const exchangeBalance = await exchange.totalBalanceOf(address, account)
 
         // Dispatch balance
-        useDispatch(setBalance({
+        dispatch(setBalance({
           address: address,
           wallet: ethers.formatUnits(walletBalance, 18),
           exchange: ethers.formatUnits(exchangeBalance, 18),
@@ -87,9 +88,11 @@ export default function Home() {
       </section>
       <section className="deposit">
         <h2>Deposit</h2>
+        <Transfer type="deposit" tokens={tokens}/>
       </section>
       <section className="withdraw">
         <h2>Withdraw</h2>
+        <Transfer type="withdraw" tokens={tokens}/>
       </section>
     </div>
   );

@@ -71,7 +71,7 @@ function TopNav() {
     useEffect(() => {
 
         if (sdk && metamask) {
-            console.log(config[Number(chainId)])
+            //console.log(config[Number(chainId)])
 
             // Create event listeners
             metamask.on("accountsChanged", async (accounts) => {
