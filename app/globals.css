@@ -283,8 +283,8 @@ table tbody tr:nth-of-type(odd) td:last-child {
 */
 
 .table-wrapper {
-  max-height: 20em;
-  padding: 0 0.50em 0 0.10em;
+  max-height: 22em;
+  padding: 0 0.50em 2px 0.10em;
   overflow-y: auto;
 }
 
