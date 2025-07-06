@@ -59,12 +59,12 @@ function TopNav() {
         const account = await provider.getSigner() // wallet
         const balance = await provider.getBalance(account)
 
-        // Stroe the values in the state
-        dispatch(setAccount(account.address))
-        dispatch(setBalance(ethers.formatUnits(balance, 18)))
+        // Store the values in the state
+       dispatch(setAccount(account.address))
+       dispatch(setBalance(ethers.formatUnits(balance, 18)))
 
-        //     setAccount(account.address)
-        //     setBalance(ethers.formatUnits(balance, 18))
+            //  setAccount(account.address)
+            //  setBalance(ethers.formatUnits(balance, 18))
     }
 
     // React Hook to connect to an external system, e.g. the blockchain

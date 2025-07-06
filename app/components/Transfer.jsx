@@ -85,12 +85,11 @@ function Transfer({ type, tokens }) {
 
     }
 
-       async function withdraw(signer, address, amountWei) {
+    async function withdraw(signer, address, amountWei) {
         const transaction = await exchange.connect(signer).withdrawToken(address, amountWei)
         await transaction.wait()
 
     }
-
 
     async function getBalance(signer, address) {
 
