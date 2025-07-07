@@ -20,7 +20,7 @@ function Orders({ market, orders, type }) {
                                 key={index}
                                 role={type === "open" ? "link" : undefined}
                                 tabIndex={type === "open" ? 0 : -1}
-                                aria- label={type === "open" ? "Fill Order" : undefined}
+                                aria-label={type === "open" ? "Fill Order" : undefined}
                                 className={type === "open" ? "hover-red" : undefined}
                             // onClick={type === "open" ? () => cancelHandler(order) : undefined}
                             >

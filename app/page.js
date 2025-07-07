@@ -32,11 +32,12 @@ import {
   selectOpenOrders,
   selectFilledOrders,
   selectMyOpenOrders,
-  selectMyFilledOrders
+  selectMyFilledOrders,
+  selectPriceData
 } from "@/lib/selectors"
 
 export default function Home() {
-  
+
   // Local state
   const [showMyTransactions, setShowMyTransactions] = useState(false)
 
@@ -47,6 +48,7 @@ export default function Home() {
   const filledOrders = useAppSelector(selectFilledOrders)
   const myOpenOrders = useAppSelector(selectMyOpenOrders)
   const myFilledOrders = useAppSelector(selectMyFilledOrders)
+  const pricedata = useAppSelector(selectPriceData)
 
   // Order & Transaxtino tab references (Trades or Orders)
   const tradeRef = useRef(null)
@@ -116,7 +118,11 @@ export default function Home() {
     <div className="page trading">
       <h1 className="title">Trading</h1>
       <section className="insights">
-        <Chart />
+        {market ? (
+          <Chart market={market} data={pricedata}/>
+        ) : (
+          <p className="center"> Please select a market</p>
+        )}
       </section>
 
       <section className="market">
@@ -148,21 +154,21 @@ export default function Home() {
       </section>
 
       <section className="orders">
-        <h2>My Trades</h2>
+        <h2>{showMyTransactions ? "My Trades" : "My Orders"}</h2>
         <Tabs tabs={[
-          {name: "Trades", ref: tradeRef},
-          {name: "Orders", ref: orderRef, default: true}
+          { name: "Trades", ref: tradeRef },
+          { name: "Orders", ref: orderRef, default: true }
         ]}
-        setCondition={setShowMyTransactions}
+          setCondition={setShowMyTransactions}
         ></Tabs>
-          <Orders
+        <Orders
           market={market}
           orders={showMyTransactions ? myFilledOrders : myOpenOrders}
-          type={showMyTransactions? "filled" : "open"}
+          type={showMyTransactions ? "filled" : "open"}
         />
       </section>
 
-       <section className="transactions">
+      <section className="transactions">
         <h2>Trades</h2>
         <Orders
           market={market}

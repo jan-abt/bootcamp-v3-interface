@@ -74,7 +74,7 @@ export const options = {
 
 // Dummy data for price chart
 
-export const series = [
+export const sampleSeries = [
   {
     data: [
       { x: new Date(2025, 0, 1), y: [6593.34, 6600, 6582.63, 6600.00] },

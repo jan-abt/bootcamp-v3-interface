@@ -956,12 +956,13 @@ form input[type="submit"]:hover {
 }
 
 /* 
-  The following is specfic for apexcharts
+  The following is specfic for ApexCharts, overriding inline styles they use for tooltips
 */
-
-.apexcharts-tooltip {
-  background: var(--background);
+.apexcharts-tooltip.apexcharts-theme-light {
+    background: blueviolet !important;
+    border: 1px solid #e3e3e3 !important;
 }
+
 
 /* SWAP FORM */
 
