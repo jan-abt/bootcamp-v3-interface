@@ -16,8 +16,9 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import {
   setAllOrders,
   setCancelledOrders,
-  setFilledOrders, 
-  addOrder
+  setFilledOrders,
+  addOrder,
+  addCancelledOrder
 } from "@/lib/features/exchange/exchange"
 
 // Custom hooks
@@ -160,21 +161,38 @@ export default function Home() {
       getAllOrders()
 
       // Create event listener to listen for new orders created
-      exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp)=>{
+      exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
         const order = {
-          id:Number(id),
+          id: Number(id),
           user,
           tokenGet,
           amountGet: amountGet.toString(),
           tokenGive,
           amountGive: amountGive.toString(),
-          timestamp: timestamp.toString()        
+          timestamp: timestamp.toString()
         }
 
         dispatch(addOrder(order))
-        
+
+      })
+
+      // Create event listener to listen for new orders created
+      exchange.on("OrderCancelled", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
+        const order = {
+          id: Number(id),
+          user,
+          tokenGet,
+          amountGet: amountGet.toString(),
+          tokenGive,
+          amountGive: amountGive.toString(),
+          timestamp: timestamp.toString()
+        }
+
+        dispatch(addCancelledOrder(order))
       })
     }
+
+
 
   }, [provider, exchange, market])
 

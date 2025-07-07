@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import { setBalance } from "@/lib/features/tokens/tokens"
 import { selectTokenAndBalances } from "@/lib/selectors"
 
-// Cusomthooks
+// Custom hooks
 import { useProvider } from "@/app/hooks/useProvider"
 import { useTokens } from "@/app/hooks/useTokens"
 import { useExchange } from "@/app/hooks/useExchange"
