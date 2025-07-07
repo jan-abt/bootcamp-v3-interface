@@ -10,8 +10,6 @@ import Tabs from "@/app/components/Tabs"
 import Book from "@/app/components/Book"
 import Orders from "@/app/components/Orders"
 
-// Mock data
-import { myOpenOrders, myFilledOrders } from "@/app/data/orders"
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
@@ -32,16 +30,27 @@ import { config } from "@/app/config.json"
 import {
   selectMarket,
   selectOpenOrders,
-  selectFilledOrders
+  selectFilledOrders,
+  selectMyOpenOrders,
+  selectMyFilledOrders
 } from "@/lib/selectors"
 
 export default function Home() {
+  
+  // Local state
+  const [showMyTransactions, setShowMyTransactions] = useState(false)
 
   // Redux
   const dispatch = useAppDispatch()
   const market = useAppSelector(selectMarket)
   const openOrders = useAppSelector(selectOpenOrders)
   const filledOrders = useAppSelector(selectFilledOrders)
+  const myOpenOrders = useAppSelector(selectMyOpenOrders)
+  const myFilledOrders = useAppSelector(selectMyFilledOrders)
+
+  // Order & Transaxtino tab references (Trades or Orders)
+  const tradeRef = useRef(null)
+  const orderRef = useRef(null)
 
   // Hooks
   const { provider, chainId } = useProvider()
@@ -140,16 +149,27 @@ export default function Home() {
 
       <section className="orders">
         <h2>My Trades</h2>
-        <Orders />
+        <Tabs tabs={[
+          {name: "Trades", ref: tradeRef},
+          {name: "Orders", ref: orderRef, default: true}
+        ]}
+        setCondition={setShowMyTransactions}
+        ></Tabs>
+          <Orders
+          market={market}
+          orders={showMyTransactions ? myFilledOrders : myOpenOrders}
+          type={showMyTransactions? "filled" : "open"}
+        />
       </section>
 
-      <section className="transactions">
+       <section className="transactions">
         <h2>Trades</h2>
         <Orders
           market={market}
           orders={filledOrders}
         />
       </section>
+
 
     </div>
   );
