@@ -11,7 +11,7 @@ import Book from "@/app/components/Book"
 import Orders from "@/app/components/Orders"
 
 // Mock data
-import { myOpenOrders, filledOrders, myFilledOrders } from "@/app/data/orders"
+import { myOpenOrders, myFilledOrders } from "@/app/data/orders"
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
@@ -28,10 +28,11 @@ import { useExchange } from "@/app/hooks/useExchange"
 // Config
 import { config } from "@/app/config.json"
 
-// 
+// Selectors
 import {
   selectMarket,
-  selectOpenOrders
+  selectOpenOrders,
+  selectFilledOrders
 } from "@/lib/selectors"
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
   const dispatch = useAppDispatch()
   const market = useAppSelector(selectMarket)
   const openOrders = useAppSelector(selectOpenOrders)
+  const filledOrders = useAppSelector(selectFilledOrders)
 
   // Hooks
   const { provider, chainId } = useProvider()
@@ -58,14 +60,14 @@ export default function Home() {
     // Fetch cancelled orders
     const cancelledOrdersStream = await exchange.queryFilter("OrderCancelled", 0, block)
     const cancelledOrders = cancelledOrdersStream.map(event => event.args)
-    
+
     // Set cancelled orders in Redux
     dispatch(setCancelledOrders(serializeOrders(cancelledOrders)))
 
     // Fetch filled orders
     const filledOrdersStream = await exchange.queryFilter("OrderFilled", 0, block)
     const filledOrders = filledOrdersStream.map(event => event.args)
-    
+
     // Set filled orders in Redux
     dispatch(setFilledOrders(serializeOrders(filledOrders)))
   }
@@ -78,7 +80,7 @@ export default function Home() {
     let serializedOrders = []
 
     orders.forEach(o => {
-      
+
       serializedOrders[Number(o.id) - 1] = {
         id: o.id.toString(),
         user: o.user,
@@ -142,8 +144,11 @@ export default function Home() {
       </section>
 
       <section className="transactions">
-        <h2>My Trades</h2>
-        <Orders />
+        <h2>Trades</h2>
+        <Orders
+          market={market}
+          orders={filledOrders}
+        />
       </section>
 
     </div>
