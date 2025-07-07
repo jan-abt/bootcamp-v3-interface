@@ -37,7 +37,6 @@ export default function Home() {
 
   async function getBalances() {
 
-
     Object
       .keys(tokenContracts)
       .forEach(async (address, index) => {
@@ -62,10 +61,6 @@ export default function Home() {
         }))
 
       })
-
-
-
-
   }
 
   useEffect(() => {

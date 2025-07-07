@@ -25,7 +25,7 @@ function Book({ caption, market, orders }) {
                     <tr>
                         <th>{caption === "Selling" ? market[1].symbol :  market[0].symbol}</th>
                         <th>{market[0].symbol}/{market[1].symbol}</th>
-                         <th>{caption === "Selling" ? market[0].symbol :  market[1].symbol}</th>
+                        <th>{caption === "Buying" ? market[0].symbol :  market[1].symbol}</th>
                     </tr>
                 </thead>
                 <tbody>

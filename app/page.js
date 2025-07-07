@@ -16,7 +16,8 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import {
   setAllOrders,
   setCancelledOrders,
-  setFilledOrders
+  setFilledOrders, 
+  addOrder
 } from "@/lib/features/exchange/exchange"
 
 // Custom hooks
@@ -33,26 +34,33 @@ import {
   selectFilledOrders,
   selectMyOpenOrders,
   selectMyFilledOrders,
-  selectPriceData
+  selectPriceData,
+  selectAccount
 } from "@/lib/selectors"
 
 export default function Home() {
 
   // Local state
   const [showMyTransactions, setShowMyTransactions] = useState(false)
+  const [showBuy, setShowBuy] = useState(true)
 
   // Redux
   const dispatch = useAppDispatch()
   const market = useAppSelector(selectMarket)
+  const account = useAppSelector(selectAccount)
   const openOrders = useAppSelector(selectOpenOrders)
   const filledOrders = useAppSelector(selectFilledOrders)
   const myOpenOrders = useAppSelector(selectMyOpenOrders)
   const myFilledOrders = useAppSelector(selectMyFilledOrders)
   const pricedata = useAppSelector(selectPriceData)
 
-  // Order & Transaxtino tab references (Trades or Orders)
+  // Order & Transaction tab references (Trades | Orders)
   const tradeRef = useRef(null)
   const orderRef = useRef(null)
+
+  // Order Form tab references (Buy | Sell)
+  const buyRef = useRef(null)
+  const sellRef = useRef(null)
 
   // Hooks
   const { provider, chainId } = useProvider()
@@ -103,13 +111,69 @@ export default function Home() {
       }
     })
     return serializedOrders
+  }
 
+  // Handlers
+  async function orderHandler(form) {
+    // Get form inputs
+    // Validate inputs
+    // Get sifner and format amount
+    // Submit to blockchain
+    try {
+
+      const amount = form.get("amount")
+      const price = form.get("price")
+
+
+      if (amount == 0) return
+      if (price == 0) return
+
+      // Get the Signer meaning, the current account that is connected to the MetaMask
+      // and format the amount 
+      const signer = await provider.getSigner()
+      const amountGetWei = ethers.parseUnits(amount.toString(), 18)
+      const amountGiveWei = ethers.parseUnits((amount * price).toString(), 18)
+
+      if (showBuy) {
+        await makeOrder(signer, market[0].address, amountGetWei, market[1].address, amountGiveWei)
+      } else {
+        await makeOrder(signer, market[1].address, amountGetWei, market[0].address, amountGiveWei)
+      }
+
+
+    } catch (error) {
+      console.log(error)
+      return
+
+    }
+
+  }
+
+  async function makeOrder(signer, tokenGet, amountGetWei, tokenGive, amountGiveWei) {
+    const transaction = await exchange.connect(signer).makeOrder(tokenGet, amountGetWei, tokenGive, amountGiveWei)
+    await transaction.wait()
   }
 
   useEffect(() => {
     if (provider && exchange && market) {
+      // Fetch all orders
       getAllOrders()
 
+      // Create event listener to listen for new orders created
+      exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp)=>{
+        const order = {
+          id:Number(id),
+          user,
+          tokenGet,
+          amountGet: amountGet.toString(),
+          tokenGive,
+          amountGive: amountGive.toString(),
+          timestamp: timestamp.toString()        
+        }
+
+        dispatch(addOrder(order))
+        
+      })
     }
 
   }, [provider, exchange, market])
@@ -119,7 +183,7 @@ export default function Home() {
       <h1 className="title">Trading</h1>
       <section className="insights">
         {market ? (
-          <Chart market={market} data={pricedata}/>
+          <Chart market={market} data={pricedata} />
         ) : (
           <p className="center"> Please select a market</p>
         )}
@@ -132,10 +196,33 @@ export default function Home() {
 
       <section className="order">
         <h2>New Order</h2>
-        <Tabs />
-        <form>
+        <Tabs
+          tabs={[
+            { name: "Buy", ref: buyRef, default: true },
+            { name: "Sell", ref: sellRef }
+          ]}
+          setCondition={setShowBuy}
+        />
+        {!account ?
+          (<p className="center"> Please Connect Wallet</p>)
+          : !exchange ?
+            (<p className="center"> Exchange Not Deployed</p>)
+            : (
+              <form action={orderHandler}>
+                <label htmlFor="amount">
+                  {showBuy ? "Buy " : "Sell "} Amount
+                </label>
+                <input type="number" name="amount" id="amount" placeholder="0.0000" step="0.0001" />
 
-        </form>
+                <label htmlFor="price">
+                  {showBuy ? "Buy " : "Sell "} Price
+                </label>
+                <input type="number" name="price" id="price" placeholder="0.0000" step="0.0001" />
+
+                <input type="submit" value={`Create ${showBuy ? "Buy" : "Sell"} Order`} />
+              </form>
+            )
+        }
       </section>
 
       <section className="orderbook">
