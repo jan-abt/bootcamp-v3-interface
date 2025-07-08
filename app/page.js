@@ -18,7 +18,8 @@ import {
   setCancelledOrders,
   setFilledOrders,
   addOrder,
-  addCancelledOrder
+  addCancelledOrder,
+  addFilledOrder
 } from "@/lib/features/exchange/exchange"
 
 // Custom hooks
@@ -156,44 +157,66 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (provider && exchange && market) {
-      // Fetch all orders
-      getAllOrders()
+      if (provider && exchange && market) {
+        // Fetch all orders
+        getAllOrders()
 
-      // Create event listener to listen for new orders created
-      exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
-        const order = {
-          id: Number(id),
-          user,
-          tokenGet,
-          amountGet: amountGet.toString(),
-          tokenGive,
-          amountGive: amountGive.toString(),
-          timestamp: timestamp.toString()
+        // Create event listener to listen for new orders created
+        exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
+          const order = {
+            id: Number(id),
+            user,
+            tokenGet,
+            amountGet: amountGet.toString(),
+            tokenGive,
+            amountGive: amountGive.toString(),
+            timestamp: timestamp.toString()
+          }
+
+          dispatch(addOrder(order))
+
+        })
+
+        // Create event listener to listen for new orders created
+        exchange.on("OrderCancelled", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
+          const order = {
+            id: Number(id),
+            user,
+            tokenGet,
+            amountGet: amountGet.toString(),
+            tokenGive,
+            amountGive: amountGive.toString(),
+            timestamp: timestamp.toString()
+          }
+
+          dispatch(addCancelledOrder(order))
+        })
+
+        // Create event listener to listen for new orders created
+        exchange.on("OrderFilled", (id, user, tokenGet, amountGet, tokenGive, amountGive, creator, timestamp) => {
+          const order = {
+            id: Number(id),
+            user,
+            tokenGet,
+            amountGet: amountGet.toString(),
+            tokenGive,
+            amountGive: amountGive.toString(),
+            creator,
+            timestamp: timestamp.toString()
+          }
+
+          dispatch(addFilledOrder(order))
+        })
+
+        // Remove any ducplicate event listeners,
+        // that may have been added to Redux due to navigating to and from this page
+        return () =>{
+          exchange.off("OrderCreated")
+          exchange.off("OrderCancelled")
+          exchange.off("OrderFilled")
         }
 
-        dispatch(addOrder(order))
-
-      })
-
-      // Create event listener to listen for new orders created
-      exchange.on("OrderCancelled", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
-        const order = {
-          id: Number(id),
-          user,
-          tokenGet,
-          amountGet: amountGet.toString(),
-          tokenGive,
-          amountGive: amountGive.toString(),
-          timestamp: timestamp.toString()
-        }
-
-        dispatch(addCancelledOrder(order))
-      })
-    }
-
-
-
+      }
   }, [provider, exchange, market])
 
   return (
@@ -233,7 +256,7 @@ export default function Home() {
                 <input type="number" name="amount" id="amount" placeholder="0.0000" step="0.0001" />
 
                 <label htmlFor="price">
-                  {showBuy ? "Buy " : "Sell "} Price
+                  Price Per Unit
                 </label>
                 <input type="number" name="price" id="price" placeholder="0.0000" step="0.0001" />
 

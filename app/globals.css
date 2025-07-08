@@ -329,9 +329,9 @@ select {
 
   font-family: "Lexend";
 
-  -moz-appearance: none;
+  /* -moz-appearance: none;
   -webkit-appearance: none;
-  appearance: none;
+  appearance: none; */
 
   cursor: pointer;
   position: relative;
@@ -976,6 +976,7 @@ form input[type="submit"]:hover {
   background: linear-gradient(360deg, var(--clr-orange), 0.1%, rgba(255, 255, 255, 0.04));
 }
 
+
 .swap form {
   display: flex;
   justify-content: center;
@@ -997,7 +998,6 @@ form input[type="submit"]:hover {
 
   height: 120px;
   padding: 1em;
-
   position: relative;
 }
 
@@ -1017,6 +1017,7 @@ form input[type="submit"]:hover {
 }
 
 .swap form .input .select {
+  
   position: absolute;
   top: 25%;
   left: 50%;
@@ -1324,3 +1325,5 @@ form input[type="submit"]:hover {
     height: 40px;
   }
 }
+
+
