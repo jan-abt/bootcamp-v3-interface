@@ -113,6 +113,7 @@ function TopNav() {
                         value={config[Number(chainId)] ? chainId : 0}>
                         <option value="0">Network</option>
                         <option value="0x7a69">Hardhat</option>
+                        <option value="0x4">Tenderly</option>
                     </select>
                 </div>
             </div>
