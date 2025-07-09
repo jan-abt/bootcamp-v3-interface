@@ -69,7 +69,7 @@ export default function Home() {
   const { exchange } = useExchange()
 
 
-  async function getAllOrders() {
+  async function dispatchAllOrders() {
     const block = await provider.getBlockNumber() // most recent block
 
     // Fetch orders ever created
@@ -158,8 +158,8 @@ export default function Home() {
 
   useEffect(() => {
       if (provider && exchange && market) {
-        // Fetch all orders
-        getAllOrders()
+        // dispatch all orders into redux
+        dispatchAllOrders()
 
         // Create event listener to listen for new orders created
         exchange.on("OrderCreated", (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {

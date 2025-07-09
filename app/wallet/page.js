@@ -35,7 +35,7 @@ export default function Home() {
 
 
 
-  async function getBalances() {
+  async function dispatchBalances() {
 
     Object
       .keys(tokenContracts)
@@ -53,7 +53,7 @@ export default function Home() {
         const walletBalance = await tokenContracts[address].balanceOf(account)
         const exchangeBalance = await exchange.totalBalanceOf(address, account)
 
-        // Dispatch balance
+        // Dispatch balance to redux store
         dispatch(setBalance({
           address: address,
           wallet: ethers.formatUnits(walletBalance, 18),
@@ -65,7 +65,7 @@ export default function Home() {
 
   useEffect(() => {
     if (tokenContracts && account) {
-      getBalances()
+      dispatchBalances()
     }
   }, [tokenContracts, account])
 
