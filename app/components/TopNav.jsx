@@ -60,11 +60,11 @@ function TopNav() {
         const balance = await provider.getBalance(account)
 
         // Store the values in the state
-       dispatch(setAccount(account.address))
-       dispatch(setBalance(ethers.formatUnits(balance, 18)))
+        dispatch(setAccount(account.address))
+        dispatch(setBalance(ethers.formatUnits(balance, 18)))
 
-            //  setAccount(account.address)
-            //  setBalance(ethers.formatUnits(balance, 18))
+        //  setAccount(account.address)
+        //  setBalance(ethers.formatUnits(balance, 18))
     }
 
     // React Hook to connect to an external system, e.g. the blockchain
@@ -114,6 +114,7 @@ function TopNav() {
                         <option value="0">Network</option>
                         <option value="0x7a69">Hardhat</option>
                         <option value="0x4">Tenderly</option>
+                        <option value="0xaa36a7">Sepolia</option>
                     </select>
                 </div>
             </div>
