@@ -1,31 +1,54 @@
-const { useState, useEffect } = require("react");
-const { useSDK } = require("@metamask/sdk-react");
-const { ethers } = require("ethers");
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import { getRpcUrl, CHAIN_ID } from "@/app/config.js";
 
-/*
- * Provider:
- * A read-only connection to the blockchain.
- * Enables querying blockchain state, such as:
- *   - Accounts
- *   - Transaction details
- *   - Event logs
- */
 export function useProvider() {
+  const [provider, setProvider] = useState(null);
+  const [selectedChainId, setSelectedChainId] = useState(null);
+  const [error, setError] = useState(null);
 
-    const [provider, setProvider] = useState(null);
-    const { sdk, chainId } = useSDK();
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum) {
+      const newProvider = new ethers.BrowserProvider(window.ethereum); // Prioritize MetaMask
+      setProvider(newProvider);
 
-    // React hook to establish connection to the MetaMask provider
-    useEffect(() => {
-        if (sdk) {
-            // a MetaMask-compatible EIP-1193 provider object that lets our DApp interact with the Ethereum blockchain
-            const ethereum = sdk.getProvider();
-            // wraps it in ethers.js
-            const prov = new ethers.BrowserProvider(ethereum);
-            setProvider(prov);
+      newProvider.getNetwork().then((network) => {
+        const newChainId = Number(network.chainId);
+        setSelectedChainId(newChainId);
+        const expectedChainId = parseInt(CHAIN_ID || "31337");
+        if (newChainId !== expectedChainId) {
+          console.warn("Chain ID mismatch, expected:", expectedChainId, "got:", newChainId);
+          setError("Please switch to the expected network (chain ID " + expectedChainId + ")");
+          window.ethereum
+            ?.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: ethers.toBeHex(expectedChainId) }],
+            })
+            .catch((err) => {
+              if (err.code === 4902) {
+                window.ethereum?.request({
+                  method: "wallet_addEthereumChain",
+                  params: [
+                    {
+                      chainId: ethers.toBeHex(expectedChainId),
+                      chainName: expectedChainId === 31337 ? "Hardhat" : "Sepolia",
+                      rpcUrls: [getRpcUrl(ethers.toBeHex(expectedChainId))],
+                    },
+                  ],
+                });
+              } else {
+                setError(`Chain switch failed: ${err.message}. Please switch manually.`);
+                setProvider(null);
+              }
+            });
+        } else {
+          setError(null);
         }
-    }, [sdk]); // Run when `sdk` loads or changes
+      }).catch((err) => setError(`Network error: ${err.message}`));
+    } else {
+      setError("MetaMask not detected");
+    }
+  }, []);
 
-    return { provider, chainId };
-
+  return { provider, selectedChainId, error };
 }

@@ -5,8 +5,8 @@ import { ethers } from "ethers"
 import { useProvider } from "@/app/hooks/useProvider"
 
 // ABIs & config
-import EXCHANGE from "@/app/abis/Exchange.json"
-import config from "@/app/config.json"
+import EXCHANGE_ABI from "@/app/abis/Exchange.json"
+import {CHAIN_ID, EXCHANGE_ADDRESS} from "@/app/config.js"
 
 export function useExchange() {
 
@@ -16,13 +16,12 @@ export function useExchange() {
     // React Hook to connect to an external system
     useEffect(() => {
 
-        if (provider) {
-            if (!config[Number(chainId)])
+        if (provider && EXCHANGE_ADDRESS) {
+            if (CHAIN_ID !== chainId)
                 return
-
-            const exchangeAddress = config[Number(chainId)].exchange
-            const contract = new ethers.Contract(exchangeAddress, EXCHANGE, provider);                
-            setExchange(contract)
+            const signer = provider.getSigner();
+            const exchangeContract = new ethers.Contract(EXCHANGE_ADDRESS, EXCHANGE_ABI, signer);
+            setExchange(exchangeContract);
         }
 
     }, [provider])// execute function whenever the any element of the dependency list loads or changes
