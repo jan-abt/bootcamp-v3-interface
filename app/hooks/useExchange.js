@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useProvider } from "@/app/hooks/useProvider";
 import EXCHANGE_ABI from "@/app/abis/Exchange.json";
-import { CHAIN_ID, EXCHANGE_ADDRESS } from "@/app/config.js";
+import { CHAIN_ID, EXCHANGE_ADDRESS } from "@/app/globals.js";
 
 export function useExchange() {
   const { provider, chainId, isLoading } = useProvider();

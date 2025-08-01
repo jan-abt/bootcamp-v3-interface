@@ -18,7 +18,7 @@ import { useProvider } from "@/app/hooks/useProvider";
 import network from "@/app/assets/other/network.svg";
 
 // Import config
-import { getRpcUrl, hexed } from "@/app/config.js";
+import { getRpcUrl, hexed } from "@/app/globals.js";
 
 function TopNav() {
   const { sdk, provider: metamask, chainId:hexChainId } = useSDK();

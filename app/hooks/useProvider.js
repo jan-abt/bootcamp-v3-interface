@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { getRpcUrl, CHAIN_ID } from "@/app/config.js";
+import { getRpcUrl, CHAIN_ID } from "@/app/globals.js";
 
 export function useProvider() {
   const [provider, setProvider] = useState(null);
