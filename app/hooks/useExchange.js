@@ -1,30 +1,34 @@
 import { useState, useEffect } from "react";
-import { ethers } from "ethers"
-
-// Custom hooks
-import { useProvider } from "@/app/hooks/useProvider"
-
-// ABIs & config
-import EXCHANGE_ABI from "@/app/abis/Exchange.json"
-import {CHAIN_ID, EXCHANGE_ADDRESS} from "@/app/config.js"
+import { ethers } from "ethers";
+import { useProvider } from "@/app/hooks/useProvider";
+import EXCHANGE_ABI from "@/app/abis/Exchange.json";
+import { CHAIN_ID, EXCHANGE_ADDRESS } from "@/app/config.js";
 
 export function useExchange() {
+  const { provider, chainId, isLoading } = useProvider();
+  const [exchange, setExchange] = useState(null);
 
-    const { provider, chainId } = useProvider()
-    const [exchange, setExchange] = useState(null)
-
-    // React Hook to connect to an external system
-    useEffect(() => {
-
-        if (provider && EXCHANGE_ADDRESS) {
-            if (CHAIN_ID !== chainId)
-                return
-            const signer = provider.getSigner();
-            const exchangeContract = new ethers.Contract(EXCHANGE_ADDRESS, EXCHANGE_ABI, signer);
-            setExchange(exchangeContract);
+  useEffect(() => {
+    async function initializeExchange() {
+      if (provider && chainId && CHAIN_ID && EXCHANGE_ADDRESS && !isLoading) {
+        if (Number(CHAIN_ID) !== chainId) {
+          console.warn(`Chain ID mismatch: expected ${CHAIN_ID}, got ${chainId}`);
+          return;
         }
+        try {
+          // Initialize with provider for read-only calls
+          const exchangeContract = new ethers.Contract(EXCHANGE_ADDRESS, EXCHANGE_ABI, provider);
+          const address = await exchangeContract.getAddress();
+          console.log(`Exchange Contract Initialized - Address: ${address}`);
+          setExchange(exchangeContract);
+        } catch (error) {
+          console.error("Failed to initialize exchange contract:", error);
+        }
+      }
+    }
+    initializeExchange();
+  }, [provider, chainId, isLoading]);
 
-    }, [provider])// execute function whenever the any element of the dependency list loads or changes
 
-    return { exchange }
+  return { exchange };
 }

@@ -16,13 +16,11 @@ export function useTokens() {
     // React Hook to connect to an external system
     useEffect(() => {
 
-        if (provider) {
-            if (!config[Number(chainId)])
-                return
+        if (provider && chainId) {
             
             let contracts = {}
 
-            config[Number(chainId)].tokens.forEach((tokenConfig) => {
+            config[chainId].tokens.forEach((tokenConfig) => {
                 const contract = new ethers.Contract(tokenConfig.address, TOKEN, provider);
                 contracts[tokenConfig.address] = contract;
             })
@@ -30,7 +28,7 @@ export function useTokens() {
             setTokens(contracts)
         }
 
-    }, [provider])// execute function whenever the any element of the dependency list loads or changes
+    }, [provider, chainId])// execute function whenever the any element of the dependency list loads or changes
 
     return { tokens }
 }

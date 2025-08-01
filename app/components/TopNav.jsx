@@ -21,27 +21,13 @@ import network from "@/app/assets/other/network.svg";
 import { getRpcUrl, hexed } from "@/app/config.js";
 
 function TopNav() {
-  const { sdk, provider: metamask, chainId } = useSDK();
-  const { provider, selectedChainId, error } = useProvider();
-  const [selectedNetwork, setSelectedNetwork] = useState(chainId || "0");
+  const { sdk, provider: metamask, chainId:hexChainId } = useSDK();
+  const { provider, chainId:networkChainId, error } = useProvider();
+  const [selectedChainId, setSelectedChainId] = useState(hexChainId || "0");
 
   const dispatch = useAppDispatch();
   const account = useAppSelector(selectAccount);
   const balance = useAppSelector(selectETHBalance);
-
-  // async function connectHandler() {
-  //   try {
-  //     const accounts = await sdk.connect();
-  //     if (accounts && accounts.length > 0) {
-  //       dispatch(setAccount(accounts[0])); // Set account immediately
-  //       await syncAccountInfo(); // Sync balance after setting account
-  //     } else {
-  //       console.log("No accounts returned from connection");
-  //     }
-  //   } catch (error) {
-  //     console.log("Connection error:", error);
-  //   }
-  // }
 
   async function connectHandler() {
     try {
@@ -57,22 +43,22 @@ function TopNav() {
   }
 
   async function networkHandler(e) {
-    const newChainId = e.target.value;
-    setSelectedNetwork(newChainId); // Update local state immediately
-    console.log("Network changed to:", newChainId);
-    const rpcUrl = getRpcUrl(hexed(newChainId));
+    const selectedChainId = e.target.value;
+    setSelectedChainId(selectedChainId); // Update local state immediately
+    console.log("Network changed to:", selectedChainId);
+    const rpcUrl = getRpcUrl(hexed(selectedChainId));
     if (rpcUrl) {
       await metamask.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: hexed(newChainId) }],
+        params: [{ chainId: hexed(selectedChainId) }],
       }).catch((err) => {
         if (err.code === 4902) {
           window.ethereum?.request({
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: hexed(newChainId),
-                chainName: newChainId === "31337" ? "Hardhat" : "Sepolia",
+                chainId: hexed(selectedChainId),
+                chainName: selectedChainId === "31337" ? "Hardhat" : "Sepolia",
                 rpcUrls: [rpcUrl],
               },
             ],
@@ -81,7 +67,7 @@ function TopNav() {
         console.error("Network switch failed:", err);
       });
     } else {
-      console.error("No RPC URL configured for chain ID:", newChainId);
+      console.error("No RPC URL configured for chain ID:", selectedChainId);
     }
   }
 
@@ -99,8 +85,8 @@ function TopNav() {
 
   useEffect(() => {
     if (sdk && metamask) {
-      const handleChainChanged = (newChainId) => {
-        setSelectedNetwork(newChainId); // Sync with MetaMask chainId
+      const handleChainChanged = (selectedChainId) => {
+        setSelectedChainId(selectedChainId); // Sync with MetaMask chainId
         window.location.reload(); // Keep reload for now, refine later
       };
 
@@ -133,16 +119,16 @@ function TopNav() {
             onChange={networkHandler}
             name="network"
             id="network"
-            value={selectedNetwork}
-            disabled={!selectedChainId}
+            value={selectedChainId}
+            disabled={!networkChainId}
           >
             <option value="0">Network</option>
             <option value="31337">Hardhat</option>
             <option value="11155111">Sepolia</option>
           </select>
-          {selectedChainId && chainId && selectedChainId !== parseInt(chainId, 16) && (
+          {networkChainId && selectedChainId && networkChainId !== parseInt(hexChainId, 16) && (
             <span style={{ color: "orange" }}>
-              (Mismatch: Expected {selectedChainId})
+              (Mismatch: Expected {networkChainId})
             </span>
           )}
         </div>
@@ -157,7 +143,7 @@ function TopNav() {
         )}
         {account ? (
           <a
-            href={`https://${chainId === "0xaa36a7" ? "sepolia." : ""}etherscan.io/address/${account}`}
+            href={`https://${hexChainId === "0xaa36a7" ? "sepolia." : ""}etherscan.io/address/${account}`}
             target="_blank"
             className="link"
           >

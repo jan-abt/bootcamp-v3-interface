@@ -10,6 +10,8 @@ import Tabs from "@/app/components/Tabs"
 import Book from "@/app/components/Book"
 import Orders from "@/app/components/Orders"
 
+// Import Utils
+import { suppressMetaMaskLogs } from "@/app/utils/Logging"
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
@@ -25,9 +27,6 @@ import {
 // Custom hooks
 import { useProvider } from "@/app/hooks/useProvider"
 import { useExchange } from "@/app/hooks/useExchange"
-
-// Config
-import { config } from "@/app/config.json"
 
 // Selectors
 import {
@@ -67,6 +66,11 @@ export default function Home() {
   // Hooks
   const { provider, chainId } = useProvider()
   const { exchange } = useExchange()
+
+  // Suppress MetaMask logs on component mount
+  useEffect(() => {
+   // suppressMetaMaskLogs();
+  }, []);
 
 
   async function dispatchAllOrders() {

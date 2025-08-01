@@ -4,7 +4,7 @@ import { getRpcUrl, CHAIN_ID } from "@/app/config.js";
 
 export function useProvider() {
   const [provider, setProvider] = useState(null);
-  const [selectedChainId, setSelectedChainId] = useState(null);
+  const [chainId, setChainId] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -13,16 +13,14 @@ export function useProvider() {
       setProvider(newProvider);
 
       newProvider.getNetwork().then((network) => {
-        const newChainId = Number(network.chainId);
-        setSelectedChainId(newChainId);
-        const expectedChainId = parseInt(CHAIN_ID || "31337");
-        if (newChainId !== expectedChainId) {
-          console.warn("Chain ID mismatch, expected:", expectedChainId, "got:", newChainId);
-          setError("Please switch to the expected network (chain ID " + expectedChainId + ")");
+        const networkChainId = Number(network.chainId);
+        if (networkChainId !== parseInt(CHAIN_ID)) {
+          console.warn("Chain ID mismatch, expected:", parseInt(CHAIN_ID), "got:", networkChainId);
+          setError("Please switch to the expected network (chain ID " + parseInt(CHAIN_ID) + ")");
           window.ethereum
             ?.request({
               method: "wallet_switchEthereumChain",
-              params: [{ chainId: ethers.toBeHex(expectedChainId) }],
+              params: [{ chainId: ethers.toBeHex(parseInt(CHAIN_ID)) }],
             })
             .catch((err) => {
               if (err.code === 4902) {
@@ -30,9 +28,9 @@ export function useProvider() {
                   method: "wallet_addEthereumChain",
                   params: [
                     {
-                      chainId: ethers.toBeHex(expectedChainId),
-                      chainName: expectedChainId === 31337 ? "Hardhat" : "Sepolia",
-                      rpcUrls: [getRpcUrl(ethers.toBeHex(expectedChainId))],
+                      chainId: ethers.toBeHex(parseInt(CHAIN_ID)),
+                      chainName: parseInt(CHAIN_ID) === 31337 ? "Hardhat" : "Sepolia",
+                      rpcUrls: [getRpcUrl(ethers.toBeHex(parseInt(CHAIN_ID)))],
                     },
                   ],
                 });
@@ -42,7 +40,9 @@ export function useProvider() {
               }
             });
         } else {
+          setChainId(networkChainId);
           setError(null);
+
         }
       }).catch((err) => setError(`Network error: ${err.message}`));
     } else {
@@ -50,5 +50,5 @@ export function useProvider() {
     }
   }, []);
 
-  return { provider, selectedChainId, error };
+  return { provider, chainId, error };
 }

@@ -33,8 +33,6 @@ export default function Home() {
   const walletBalances = useAppSelector(selectWalletBalances)
   const exchangeBalances = useAppSelector(selectExchangeBalances)
 
-
-
   async function dispatchBalances() {
 
     Object
@@ -52,7 +50,7 @@ export default function Home() {
 
         const walletBalance = await tokenContracts[address].balanceOf(account)
         const exchangeBalance = await exchange.totalBalanceOf(address, account)
-
+        
         // Dispatch balance to redux store
         dispatch(setBalance({
           address: address,
