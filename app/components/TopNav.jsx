@@ -46,7 +46,7 @@ function TopNav() {
     const selectedChainId = e.target.value;
     setSelectedChainId(selectedChainId); // Update local state immediately
     console.log("Network changed to:", selectedChainId);
-    const rpcUrl = getRPCUrl(toHexademical(selectedChainId));
+    const rpcUrl = getRPCUrl(selectedChainId);
     if (rpcUrl) {
       await metamask.request({
         method: "wallet_switchEthereumChain",
@@ -66,8 +66,13 @@ function TopNav() {
         }
         console.error("Network switch failed:", err);
       });
-    } else {
-      console.error("No RPC URL configured for chain ID:", selectedChainId);
+    } else {      
+      if(selectedChainId == 0){
+        console.error(`Please select a network`)
+      }else{
+        console.error(`No RPC URL defined for chain ID ${selectedChainId}. 
+          \nCheck NEXT_PUBLIC_RPC_URL_${selectedChainId === "31337" ? "HARDHAT" : "SEPOLIA"} in .env.local (local) or\n Vercel environment variables (production).`);
+      }
     }
   }
 

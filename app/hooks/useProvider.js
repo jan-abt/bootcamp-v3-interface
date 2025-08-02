@@ -30,7 +30,7 @@ export function useProvider() {
                     {
                       chainId: ethers.toBeHex(parseInt(CHAIN_ID)),
                       chainName: parseInt(CHAIN_ID) === 31337 ? "Hardhat" : "Sepolia",
-                      rpcUrls: [getRPCUrl(ethers.toBeHex(parseInt(CHAIN_ID)))],
+                      rpcUrls: [getRPCUrl(parseInt(CHAIN_ID))],
                     },
                   ],
                 });

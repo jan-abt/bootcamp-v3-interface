@@ -20,8 +20,8 @@ export const MARKETS = [
 ];
 
 const RPC_URLS = {
-  "0x7a69": process.env.NEXT_PUBLIC_RPC_URL_HARDHAT, // Hardhat
-  "0xaa36a7": process.env.NEXT_PUBLIC_RPC_URL_SEPOLIA// Sepolia
+  "31337": process.env.NEXT_PUBLIC_RPC_URL_HARDHAT, // Hardhat
+  "11155111": process.env.NEXT_PUBLIC_RPC_URL_SEPOLIA// Sepolia
 };
 
 export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
