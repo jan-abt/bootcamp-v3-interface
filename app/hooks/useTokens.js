@@ -5,8 +5,9 @@ import { ethers } from "ethers"
 import { useProvider } from "@/app/hooks/useProvider"
 
 // ABIs & config
-import TOKEN from "@/app/abis/Token.json"
-import config from "@/app/config.json"
+import TOKEN_ABI from "@/app/abis/Token.json"
+import { TOKENS } from "@/app/globals.js";
+
 
 export function useTokens() {
 
@@ -20,8 +21,8 @@ export function useTokens() {
             
             let contracts = {}
 
-            config[chainId].tokens.forEach((tokenConfig) => {
-                const contract = new ethers.Contract(tokenConfig.address, TOKEN, provider);
+            TOKENS.forEach((tokenConfig) => {
+                const contract = new ethers.Contract(tokenConfig.address, TOKEN_ABI, provider);
                 contracts[tokenConfig.address] = contract;
             })
 

@@ -13,7 +13,7 @@ import { useTokens } from "@/app/hooks/useTokens"
 
 
 // Import config
-import config from "@/app/config.json"
+import { MARKETS } from "@/app/globals.js";
 
 
 
@@ -39,28 +39,28 @@ function Market() {
     }
 
     useEffect(() => {
-        if(config[Number(chainId)] && tokens){
-            marketHandler(config[Number(chainId)].markets[0].tokens)
+        if (chainId && tokens) {
+            marketHandler(MARKETS[0].tokens)
         }
-     }, [config, tokens])
+    }, [chainId, tokens])
 
     return (
         <div className="select">
-            {config[Number(chainId)] && (
+            {(
                 <select
                     name="market"
                     id="market"
                     defaultValue={
-                        config[Number(chainId)].markets.length > 0 ?
-                            `${config[Number(chainId)].markets[0].tokens[0]},${config[Number(chainId)].markets[0].tokens[1]}` : 0
+                        MARKETS.length > 0 ?
+                            `${MARKETS[0].tokens[0]},${MARKETS[0].tokens[1]}` : 0
                     }
                     onChange={(e) => marketHandler(e.target.value.split(","))}
                 >
                     <option value="0" disabled>
-                        {config[Number(chainId)].markets.length > 0 ? "Select Market" : "No Markets Available"}
+                        {MARKETS.length > 0 ? "Select Market" : "No Markets Available"}
                     </option>
 
-                    {config[Number(chainId)].markets.map((market, index) => (
+                    {MARKETS.map((market, index) => (
                         <option
                             key={index}
                             value={`${market.tokens[0]},${market.tokens[1]}`}

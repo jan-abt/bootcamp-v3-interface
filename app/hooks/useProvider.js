@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { getRpcUrl, CHAIN_ID } from "@/app/globals.js";
+import { getRPCUrl, CHAIN_ID } from "@/app/globals.js";
 
 export function useProvider() {
   const [provider, setProvider] = useState(null);
@@ -30,7 +30,7 @@ export function useProvider() {
                     {
                       chainId: ethers.toBeHex(parseInt(CHAIN_ID)),
                       chainName: parseInt(CHAIN_ID) === 31337 ? "Hardhat" : "Sepolia",
-                      rpcUrls: [getRpcUrl(ethers.toBeHex(parseInt(CHAIN_ID)))],
+                      rpcUrls: [getRPCUrl(ethers.toBeHex(parseInt(CHAIN_ID)))],
                     },
                   ],
                 });

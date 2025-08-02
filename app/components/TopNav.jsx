@@ -18,7 +18,7 @@ import { useProvider } from "@/app/hooks/useProvider";
 import network from "@/app/assets/other/network.svg";
 
 // Import config
-import { getRpcUrl, hexed } from "@/app/globals.js";
+import { getRPCUrl, toHexademical } from "@/app/globals.js";
 
 function TopNav() {
   const { sdk, provider: metamask, chainId:hexChainId } = useSDK();
@@ -46,18 +46,18 @@ function TopNav() {
     const selectedChainId = e.target.value;
     setSelectedChainId(selectedChainId); // Update local state immediately
     console.log("Network changed to:", selectedChainId);
-    const rpcUrl = getRpcUrl(hexed(selectedChainId));
+    const rpcUrl = getRPCUrl(toHexademical(selectedChainId));
     if (rpcUrl) {
       await metamask.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: hexed(selectedChainId) }],
+        params: [{ chainId: toHexademical(selectedChainId) }],
       }).catch((err) => {
         if (err.code === 4902) {
           window.ethereum?.request({
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: hexed(selectedChainId),
+                chainId: toHexademical(selectedChainId),
                 chainName: selectedChainId === "31337" ? "Hardhat" : "Sepolia",
                 rpcUrls: [rpcUrl],
               },
